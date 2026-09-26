@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>أداة تشخيص الاجتماعات في بيئة العمل | المدرب بلال شنك</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --gold: #2a8f7b;
+      --gold-light: #b7e4d4;
+      --navy: #1a4d5c;
+      --navy-2: #2a6f7a;
+      --teal: #3aa39a;
+      --cream: #f3fbf7;
+      --white: #fff;
+      --muted: #4d6b70;
+      --sky: #d4f1f4;
+      --celadon: #d8f0e3;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Cairo", system-ui, sans-serif;
+      background: linear-gradient(165deg, #d4f1f4 0%, #e7f8f4 42%, #d8f0e3 100%);
+      color: #1a2330;
+      min-height: 100vh;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 24px 16px 80px; }
+    .card {
+      background: linear-gradient(180deg, #f7fffc 0%, #eefaf6 100%);
+      border-radius: 18px;
+      box-shadow: 0 16px 40px rgba(42,111,122,.12);
+      overflow: hidden;
+      border: 1px solid #c5e8df;
+    }
+    header.hero {
+      background: linear-gradient(135deg, #bfeaf0 0%, #c8efe4 55%, #d8f0e3 100%);
+      color: #13424c;
+      padding: 36px 32px 28px;
+      position: relative;
+    }
+    header.hero::after {
+      content: "";
+      position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
+      background: linear-gradient(90deg, #7ec8d4, #8ed3b8, #7ec8d4);
+    }
+    .brand-en { letter-spacing: .08em; color: #2a6f7a; font-size: 13px; font-weight: 600; }
+    h1 { font-size: 28px; line-height: 1.4; margin: 8px 0 6px; }
+    .subtitle { color: #3d6a72; font-size: 15px; }
+    .author { margin-top: 16px; font-weight: 700; color: #1a4d5c; font-size: 16px; }
+    .author small { display: block; font-weight: 400; color: #3d6a72; font-size: 13px; margin-top: 2px; }
+
+    .counter-box {
+      margin-top: 22px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid #9ad9d0;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .counter-label { font-size: 13px; color: #2a6f7a; margin-bottom: 8px; }
+    .odometer {
+      display: flex; gap: 6px; justify-content: flex-start; direction: ltr;
+    }
+    .digit {
+      width: 42px; height: 54px;
+      background: #fff;
+      border: 1px solid #7ec8d4;
+      border-radius: 8px;
+      color: #1a4d5c;
+      font-size: 28px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: inset 0 0 12px rgba(201,162,39,.15);
+    }
+    .digit:nth-child(1) { border-color: #7dd3c0; color: #7dd3c0; }
+    .digit:nth-child(2) { border-color: #86c5e8; color: #86c5e8; }
+    .digit:nth-child(3) { border-color: #e8d48b; color: #e8d48b; }
+    .digit:nth-child(4) { border-color: #f0b27a; color: #f0b27a; }
+    .digit:nth-child(5) { border-color: #e07a7a; color: #e07a7a; }
+    .digit:nth-child(6) { border-color: #c9a227; color: #c9a227; }
+
+    nav.steps {
+      display: flex; gap: 8px; padding: 14px 20px; background: #dff4ef;
+      flex-wrap: wrap;
+    }
+    nav.steps span {
+      font-size: 12px; padding: 6px 10px; border-radius: 999px;
+      background: #fff; color: var(--muted);
+    }
+    nav.steps span.active { background: #1a4d5c; color: #e7fbf6; font-weight: 700; }
+
+    .body { padding: 24px 28px 32px; }
+    h2 { color: var(--navy); font-size: 20px; margin: 8px 0 14px; }
+    p.lead { color: var(--muted); margin-bottom: 18px; line-height: 1.8; }
+
+    .axis {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 18px 8px;
+      margin-bottom: 18px;
+      border: 1px solid #c5e8df;
+    }
+    .axis h3 {
+      font-size: 16px;
+      color: var(--teal);
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #b7e0d6;
+      padding-bottom: 8px;
+    }
+    .q {
+      margin-bottom: 16px;
+    }
+    .q p { font-weight: 600; margin-bottom: 8px; color: var(--navy); }
+    .q .num { color: var(--gold); margin-left: 6px; }
+    .scale {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .scale label {
+      flex: 1 1 110px;
+      font-size: 12px;
+      background: #eefaf8;
+      border: 1px solid #b7e0d6;
+      border-radius: 8px;
+      padding: 8px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: .15s;
+    }
+    .scale input { display: none; }
+    .scale label:hover { border-color: var(--gold); }
+    .scale input:checked + span,
+    .scale label:has(input:checked) {
+      background: #1a4d5c;
+      color: #e7fbf6;
+      border-color: #1a4d5c;
+      font-weight: 700;
+    }
+
+    .open q, .opens .q textarea {
+      width: 100%; min-height: 72px;
+      border: 1px solid #b7e0d6;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 14px;
+      background: #fff;
+    }
+    .opens .q { margin-bottom: 14px; }
+
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    button, .btn {
+      font-family: inherit;
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .btn-gold { background: linear-gradient(180deg, #7ed3c4, #3aa39a); color: #08332e; }
+    .btn-navy { background: #1a4d5c; color: #fff; }
+    .btn-ghost { background: #fff; border: 1px solid #9ad9d0; color: var(--navy); }
+    .btn-teal { background: var(--teal); color: #fff; }
+
+    .hidden { display: none !important; }
+
+    .score-hero {
+      text-align: center;
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      border: 1px solid #c5e8df;
+      margin-bottom: 18px;
+    }
+    .pct { font-size: 56px; font-weight: 800; color: var(--navy); line-height: 1; }
+    .pct span { font-size: 22px; }
+    .badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 15px;
+    }
+    .l1 { background: #dcfce7; color: #166534; }
+    .l2 { background: #d1fae5; color: #047857; }
+    .l3 { background: #fef3c7; color: #92400e; }
+    .l4 { background: #ffedd5; color: #9a3412; }
+    .l5 { background: #fee2e2; color: #991b1b; }
+
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; }
+    th, td { padding: 10px 12px; text-align: right; border-bottom: 1px solid #eee; font-size: 14px; }
+    th { background: #1a4d5c; color: #e7fbf6; }
+    .bar {
+      height: 8px; background: #dff4ef; border-radius: 99px; overflow: hidden; margin-top: 4px;
+    }
+    .bar i { display: block; height: 100%; background: var(--teal); }
+
+    .tips { background: #fff; border-radius: 14px; padding: 18px; margin: 14px 0; border: 1px solid #c5e8df; }
+    .tips h3 { color: var(--navy); margin-bottom: 10px; }
+    .tips li { margin: 8px 0 8px 0; line-height: 1.7; color: #2b3644; }
+
+    .train-box {
+      background: linear-gradient(135deg, #1a4d5c, #2a8f7b);
+      color: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      margin-top: 16px;
+    }
+    .train-box h3 { color: #d8f0e3; margin-bottom: 8px; }
+    .course-name { font-size: 22px; font-weight: 800; margin: 8px 0 12px; }
+    footer.note { margin-top: 20px; font-size: 12px; color: #4d6b70; text-align: center; }
+
+    @media print {
+      body { background: #fff !important; }
+      .wrap { padding: 0; max-width: none; }
+      nav.steps, .actions, .no-print { display: none !important; }
+      .card { box-shadow: none; border: 0; }
+      header.hero { background: #e7f8f4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      #intro, #quiz, #open { display: none !important; }
+      #report { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header class="hero">
+        <div class="brand-en">WORKPLACE MEETING DIAGNOSTIC</div>
+        <h1>أداة تشخيص الاجتماعات في بيئة العمل</h1>
+        <p class="subtitle">من قياس كفاءة الاجتماعات إلى خطة تحسينها</p>
+        <div class="author">
+          إعداد: المدرب بلال شنك، خبير التطوير المؤسسي
+          <small>عضو منظمة التوستماسترز العالمية</small>
+        </div>
+        <div class="counter-box">
+          <div class="counter-label">عدد الذين أخذوا الاختبار</div>
+          <div class="odometer" id="odometer" aria-label="عداد المشاركين">
+            <div class="digit">0</div><div class="digit">0</div><div class="digit">0</div>
+            <div class="digit">0</div><div class="digit">0</div><div class="digit">0</div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="steps" id="steps">
+        <span class="active" data-s="intro">البداية</span>
+        <span data-s="quiz">الأسئلة الثلاثون</span>
+        <span data-s="open">الأسئلة المفتوحة</span>
+        <span data-s="report">التقرير والتحليل</span>
+      </nav>
+
+      <div class="body">
+        <section id="intro">
+          <h2>هدف الأداة</h2>
+          <p class="lead">تساعد الأداة المؤسسة على اكتشاف أسباب ضعف الاجتماعات: اجتماعات بلا نتائج، غياب الهدف، حضور غير ضروري، سيطرة فرد أو اثنين، قرارات غير واضحة، ضعف المتابعة، وهدر وقت الموظفين والإدارة.</p>
+          <p class="lead">30 سؤالاً على مقياس من 1 إلى 5، موزعة على ستة محاور، ثم خمسة أسئلة مفتوحة لصوت الموظف. النتيجة تُحوَّل إلى مؤشر كفاءة من 100، مع تشخيص على خمسة مستويات.</p>
+          <div class="actions">
+            <button class="btn-gold" onclick="go('quiz')">ابدأ التشخيص</button>
+          </div>
+        </section>
+
+        <section id="quiz" class="hidden">
+          <h2>الأسئلة الثلاثون</h2>
+          <p class="lead">اختر درجة موافقتك: 1 لا أوافق بشدة — 5 أوافق بشدة.</p>
+          <div id="questions"></div>
+          <div class="actions">
+            <button class="btn-ghost" onclick="go('intro')">رجوع</button>
+            <button class="btn-gold" onclick="toOpen()">التالي: الأسئلة المفتوحة</button>
+          </div>
+        </section>
+
+        <section id="open" class="hidden">
+          <h2>صوت الموظف — خمسة أسئلة مفتوحة</h2>
+          <div class="opens">
+            <div class="q"><p>1. ما أكثر شيء يضيّع وقتكم في الاجتماعات؟</p><textarea id="o1"></textarea></div>
+            <div class="q"><p>2. ما أكثر مشكلة تتكرر في اجتماعاتكم؟</p><textarea id="o2"></textarea></div>
+            <div class="q"><p>3. ما الذي تتمنى تغييره في طريقة إدارة الاجتماعات؟</p><textarea id="o3"></textarea></div>
+            <div class="q"><p>4. ما الاجتماع الذي ترى أنه يمكن إلغاؤه أو اختصاره؟</p><textarea id="o4"></textarea></div>
+            <div class="q"><p>5. ما الإجراء الواحد الذي لو تم تطبيقه سيجعل اجتماعاتكم أكثر فاعلية؟</p><textarea id="o5"></textarea></div>
+          </div>
+          <div class="actions">
+            <button class="btn-ghost" onclick="go('quiz')">رجوع</button>
+            <button class="btn-gold" onclick="compute()">إصدار التقرير</button>
+          </div>
+        </section>
+
+        <section id="report" class="hidden">
+          <div class="score-hero">
+            <div style="color:var(--muted);font-weight:700">مؤشر كفاءة الاجتماعات</div>
+            <div class="pct" id="pct">0<span>%</span></div>
+            <div id="levelBadge" class="badge l3">—</div>
+            <p id="rawScore" style="margin-top:8px;color:var(--muted)"></p>
+          </div>
+
+          <h2>تحليل المحاور الستة</h2>
+          <table>
+            <thead><tr><th>المحور</th><th>الدرجة</th><th>النسبة</th></tr></thead>
+            <tbody id="axisTable"></tbody>
+          </table>
+          <p class="lead" id="weakNote" style="margin-top:14px"></p>
+
+          <div class="tips">
+            <h3>ملخص النتيجة حسب خمسة مستويات</h3>
+            <ul>
+              <li><strong>85–100%</strong> اجتماعات عالية الكفاءة</li>
+              <li><strong>70–84%</strong> اجتماعات جيدة</li>
+              <li><strong>55–69%</strong> تحتاج إلى تحسين</li>
+              <li><strong>40–54%</strong> اجتماعات منخفضة الكفاءة</li>
+              <li><strong>أقل من 40%</strong> خلل كبير في منظومة الاجتماعات</li>
+            </ul>
+            <p id="levelExplain" style="margin-top:10px;line-height:1.8"></p>
+          </div>
+
+          <div class="tips" id="openAnswers"></div>
+
+          <div class="tips">
+            <h3>نصائح لتحسين الاجتماعات</h3>
+            <ul>
+              <li>لا اجتماع بلا هدف مكتوب وجدول أعمال يُرسل مسبقاً.</li>
+              <li>ادعُ من يُفترض أن يقرر أو ينفّذ فقط، لا الحضور الشرفي.</li>
+              <li>ابدأ في الوقت وانتهِ في الوقت، ووزّع الدقائق على البنود.</li>
+              <li>امنع النقاشات الجانبية وأعد الحوار إلى الهدف.</li>
+              <li>كل قرار: مسؤول + موعد + محضر مختصر في اليوم نفسه.</li>
+              <li>راجع البنود المفتوحة في بداية الاجتماع التالي.</li>
+              <li>أَلغِ الاجتماع الذي يمكن استبداله برسالة أو قرار مكتوب.</li>
+            </ul>
+          </div>
+
+          <div class="tips">
+            <h3>نصائح للمدراء</h3>
+            <ul>
+              <li>المدير يدير الوقت والقرار، لا يحتكر الحديث.</li>
+              <li>اسأل الصامتين رأياً محدداً حتى لا يسيطر شخص أو اثنان.</li>
+              <li>فرّق بين النقاش والفصل: بعد الاستماع احسم القرار.</li>
+              <li>كافئ الالتزام بالمواعيد والمتابعة لا طول الاجتماع.</li>
+              <li>اجعل كفاءة الاجتماع بنداً في تقييم الإدارة الوسطى.</li>
+              <li>درّب رؤساء الاجتماعات على التيسير لا على الإلقاء.</li>
+            </ul>
+          </div>
+
+          <div class="train-box">
+            <h3>تدريب وتطوير</h3>
+            <p>بناءً على أضعف محور في إجاباتك، الدورة الأنسب الآن:</p>
+            <div class="course-name" id="courseName">—</div>
+            <p id="courseWhy" style="color:#c9d6e0;line-height:1.8"></p>
+            <div class="actions" style="margin-top:14px">
+              <button class="btn-gold" type="button" id="trainBtn">زر تدريب وتطوير</button>
+            </div>
+          </div>
+
+          <div class="actions no-print" style="margin-top:18px">
+            <button class="btn-navy" onclick="window.print()">طباعة التقرير</button>
+            <button class="btn-gold" onclick="downloadPdf()">حفظ التقرير PDF</button>
+            <button class="btn-ghost" onclick="resetAll()">تشخيص جديد</button>
+          </div>
+          <footer class="note">أداة تشخيص الاجتماعات في بيئة العمل — إعداد المدرب بلال شنك، خبير التطوير المؤسسي. للاستخدام المؤسسي والتدريبي.</footer>
+        </section>
+      </div>
+    </div>
+  </div>
+
+<script>
+const AXES = [
+  { id: "goal", title: "وضوح الهدف والتحضير", qs: [
+    "لكل اجتماع هدف واضح ومحدد مسبقاً.",
+    "يتم إرسال جدول أعمال الاجتماع قبل انعقاده.",
+    "يعرف المشاركون مسبقاً ما هو المطلوب منهم.",
+    "يتم تجهيز المعلومات والبيانات اللازمة قبل الاجتماع.",
+    "يبدأ الاجتماع دون إضاعة وقت في شرح أمور كان يمكن تجهيزها مسبقاً."
+  ]},
+  { id: "time", title: "إدارة الوقت والانضباط", qs: [
+    "تبدأ الاجتماعات في الوقت المحدد.",
+    "تنتهي الاجتماعات في الوقت المحدد.",
+    "يتم الالتزام بجدول الأعمال.",
+    "لا يتم السماح بالنقاشات الجانبية التي لا تخدم الهدف.",
+    "يتم تخصيص وقت مناسب لكل موضوع."
+  ]},
+  { id: "talk", title: "المشاركة وجودة النقاش", qs: [
+    "يحصل المشاركون على فرصة حقيقية للتعبير عن آرائهم.",
+    "يتم الاستماع إلى الآراء المختلفة باحترام.",
+    "لا يسيطر شخص واحد على معظم وقت الاجتماع.",
+    "يتم التركيز على الأفكار والمشكلات بدلاً من الأشخاص.",
+    "تساعد المناقشات على الوصول إلى حلول عملية."
+  ]},
+  { id: "dec", title: "اتخاذ القرارات", qs: [
+    "يتم تحديد القرارات المطلوبة بوضوح أثناء الاجتماع.",
+    "تستند القرارات إلى معلومات وبيانات كافية.",
+    "يتم تحديد المسؤول عن تنفيذ كل قرار.",
+    "يتم تحديد موعد أو إطار زمني لتنفيذ القرارات.",
+    "يخرج المشاركون من الاجتماع وهم يعرفون ما تم اتخاذه من قرارات."
+  ]},
+  { id: "follow", title: "النتائج والمتابعة", qs: [
+    "ينتج عن الاجتماعات إجراءات عملية واضحة.",
+    "يتم توثيق القرارات والتكليفات بعد الاجتماع.",
+    "تتم متابعة تنفيذ ما تم الاتفاق عليه.",
+    "يتم مراجعة البنود السابقة عند الحاجة.",
+    "تؤدي الاجتماعات إلى نتائج ملموسة في العمل."
+  ]},
+  { id: "value", title: "كفاءة الاجتماع وقيمته", qs: [
+    "الاجتماعات الحالية ضرورية فعلاً وليست مجرد عادة.",
+    "عدد الاجتماعات التي نحضرها مناسب لطبيعة العمل.",
+    "عدد المشاركين في الاجتماع مناسب للموضوع.",
+    "الوقت الذي نقضيه في الاجتماعات يتناسب مع النتائج التي نحققها.",
+    "أرى أن اجتماعات المؤسسة تضيف قيمة حقيقية للعمل."
+  ]}
+];
+
+const SCALE = [
+  [1, "لا أوافق بشدة"],
+  [2, "لا أوافق"],
+  [3, "محايد"],
+  [4, "أوافق"],
+  [5, "أوافق بشدة"]
+];
+
+const KEY = "shannak_meeting_count";
+function getCount() { return parseInt(localStorage.getItem(KEY) || "0", 10); }
+function setCount(n) { localStorage.setItem(KEY, String(n)); renderCounter(); }
+function renderCounter() {
+  const s = String(getCount()).padStart(6, "0");
+  document.querySelectorAll("#odometer .digit").forEach((el, i) => el.textContent = s[i]);
+}
+
+function buildQuestions() {
+  const root = document.getElementById("questions");
+  root.innerHTML = "";
+  let n = 1;
+  AXES.forEach(ax => {
+    const box = document.createElement("div");
+    box.className = "axis";
+    box.innerHTML = `<h3>${ax.title} — الأسئلة ${n}–${n+4}</h3>`;
+    ax.qs.forEach(text => {
+      const q = document.createElement("div");
+      q.className = "q";
+      const labs = SCALE.map(([v, lab]) =>
+        `<label><input type="radio" name="q${n}" value="${v}" /><span>${v}. ${lab}</span></label>`
+      ).join("");
+      q.innerHTML = `<p><span class="num">${n}.</span> ${text}</p><div class="scale">${labs}</div>`;
+      box.appendChild(q);
+      n++;
+    });
+    root.appendChild(box);
+  });
+}
+
+function go(id) {
+  ["intro","quiz","open","report"].forEach(s => {
+    document.getElementById(s).classList.toggle("hidden", s !== id);
+  });
+  document.querySelectorAll("nav.steps span").forEach(el => {
+    el.classList.toggle("active", el.dataset.s === id);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function answers() {
+  const vals = [];
+  for (let i = 1; i <= 30; i++) {
+    const el = document.querySelector(`input[name="q${i}"]:checked`);
+    if (!el) return null;
+    vals.push(parseInt(el.value, 10));
+  }
+  return vals;
+}
+
+function toOpen() {
+  if (!answers()) {
+    alert("يرجى الإجابة على الأسئلة الثلاثين جميعاً قبل المتابعة.");
+    return;
+  }
+  go("open");
+}
+
+function levelOf(pct) {
+  if (pct >= 85) return { cls: "l1", title: "اجتماعات عالية الكفاءة", range: "85–100%" };
+  if (pct >= 70) return { cls: "l2", title: "اجتماعات جيدة", range: "70–84%" };
+  if (pct >= 55) return { cls: "l3", title: "تحتاج إلى تحسين", range: "55–69%" };
+  if (pct >= 40) return { cls: "l4", title: "اجتماعات منخفضة الكفاءة", range: "40–54%" };
+  return { cls: "l5", title: "خلل كبير في منظومة الاجتماعات", range: "أقل من 40%" };
+}
+
+function explain(pct, weakest) {
+  const L = levelOf(pct);
+  const map = {
+    "وضوح الهدف والتحضير": "الخلل يبدأ قبل الاجتماع: الهدف غير مكتوب أو الجدول لا يُرسل.",
+    "إدارة الوقت والانضباط": "الاجتماعات تتأخر أو تطول أو تخرج عن الجدول.",
+    "المشاركة وجودة النقاش": "النقاش إما محتكَر أو غير محترم أو لا يصل إلى حلول.",
+    "اتخاذ القرارات": "يخرج الناس دون قرار واضح أو مسؤول أو موعد.",
+    "النتائج والمتابعة": "الاتفاقات تُنسى ولا تُوثَّق ولا تُتابَع.",
+    "كفاءة الاجتماع وقيمته": "اجتماعات زائدة أو حضور زائد أو عائد ضعيف على الوقت."
+  };
+  return `تشخيصكم ضمن مستوى «${L.title}» (${L.range}). أضعف محور ظاهر الآن: ${weakest}. ${map[weakest] || ""} الأداة لا تكتفي بسؤال «هل اجتماعاتنا جيدة؟» بل تجيب: أين يحدث الخلل تحديداً.`;
+}
+
+function recommend(axisScores) {
+  const order = [
+    { id: "time", course: "إدارة الوقت بكفاءة", why: "أضعف محور لديكم هو إدارة الوقت والانضباط: البدء والانتهاء والالتزام بالجدول ومنع النقاش الجانبي." },
+    { id: "dec", course: "حل المشكلات واتخاذ القرار", why: "أضعف محور لديكم هو اتخاذ القرارات: وضوح القرار والمسؤول والموعد والاعتماد على بيانات كافية." },
+    { id: "follow", course: "حل المشكلات واتخاذ القرار", why: "الضعف في النتائج والمتابعة يعني أن القرار لا يُغلق بدورة تنفيذ واضحة." },
+    { id: "goal", course: "الاجتماعات الفعالة", why: "الضعف في الهدف والتحضير؛ دورة الاجتماعات الفعالة تعالج جدول الأعمال والدعوة والتحضير المسبق." },
+    { id: "talk", course: "الاجتماعات الفعالة", why: "الضعف في المشاركة وجودة النقاش؛ التيسير ومنع السيطرة الفردية جزء من الاجتماع الفعال." },
+    { id: "value", course: "الاجتماعات الفعالة", why: "قيمة الاجتماع منخفضة: عدد الاجتماعات أو المشاركين لا يتناسب مع العائد." }
+  ];
+  const sorted = [...axisScores].sort((a,b) => a.score - b.score);
+  const weakId = sorted[0].id;
+  return order.find(o => o.id === weakId) || order[3];
+}
+
+function compute() {
+  const vals = answers();
+  if (!vals) { alert("يرجى إكمال الأسئلة الثلاثين."); go("quiz"); return; }
+
+  const total = vals.reduce((a,b) => a+b, 0);
+  const pct = Math.round((total / 150) * 100);
+  const axes = AXES.map((ax, i) => {
+    const slice = vals.slice(i*5, i*5+5);
+    const score = slice.reduce((a,b)=>a+b,0);
+    return { id: ax.id, title: ax.title, score, pct: Math.round(score/25*100) };
+  });
+  const weakest = [...axes].sort((a,b)=>a.score-b.score)[0];
+  const L = levelOf(pct);
+
+  document.getElementById("pct").innerHTML = pct + "<span>%</span>";
+  const badge = document.getElementById("levelBadge");
+  badge.className = "badge " + L.cls;
+  badge.textContent = L.title;
+  document.getElementById("rawScore").textContent = `المجموع ${total} من 150 (الحد الأدنى 30).`;
+
+  document.getElementById("axisTable").innerHTML = axes.map(a =>
+    `<tr><td>${a.title}<div class="bar"><i style="width:${a.pct}%"></i></div></td><td>${a.score}/25</td><td>${a.pct}%</td></tr>`
+  ).join("");
+
+  document.getElementById("weakNote").innerHTML =
+    `<strong>أين الخلل؟</strong> المشاركة قد تكون جيدة بينما الوقت أو المتابعة أو القرار ضعيف. أضعف محور هنا: <strong>${weakest.title} (${weakest.pct}%)</strong>.`;
+  document.getElementById("levelExplain").textContent = explain(pct, weakest.title);
+
+  const opens = [1,2,3,4,5].map(i => document.getElementById("o"+i).value.trim());
+  const labels = [
+    "أكثر شيء يضيّع الوقت",
+    "المشكلة المتكررة",
+    "ما تتمنى تغييره",
+    "اجتماع يمكن إلغاؤه أو اختصاره",
+    "الإجراء الواحد الأكثر أثراً"
+  ];
+  document.getElementById("openAnswers").innerHTML =
+    "<h3>صوت الموظف</h3>" +
+    labels.map((lab,i) => `<p style="margin:8px 0"><strong>${lab}:</strong> ${opens[i] || "—"}</p>`).join("");
+
+  const rec = recommend(axes);
+  document.getElementById("courseName").textContent = rec.course;
+  document.getElementById("courseWhy").textContent = rec.why;
+  document.getElementById("trainBtn").onclick = () => {
+    alert("توصية التدريب والتطوير:\n\n" + rec.course + "\n\n" + rec.why + "\n\nيمكن إدراج هذه الدورة ضمن برنامج شنك لتحسين كفاءة الاجتماعات خلال 30 يوماً.");
+  };
+
+  setCount(getCount() + 1);
+  go("report");
+}
+
+function downloadPdf() {
+  const report = document.getElementById("report");
+  if (report.classList.contains("hidden")) {
+    alert("أصدر التقرير أولاً ثم احفظه PDF.");
+    return;
+  }
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: "تقرير-تشخيص-الاجتماعات-شنك.pdf",
+    image: { type: "jpeg", quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    pagebreak: { mode: ["avoid-all", "css", "legacy"] }
+  };
+  html2pdf().set(opt).from(report).save();
+}
+
+function resetAll() {
+  document.querySelectorAll("input[type=radio]").forEach(i => i.checked = false);
+  [1,2,3,4,5].forEach(i => document.getElementById("o"+i).value = "");
+  go("intro");
+}
+
+buildQuestions();
+renderCounter();
+</script>
+</body>
+</html>
