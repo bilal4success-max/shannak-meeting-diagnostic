@@ -636,12 +636,8 @@ function getCount(key) { return parseInt(localStorage.getItem(key)||"0",10); }
 function setCount(key, n) { localStorage.setItem(key, String(n)); }
 function renderOdo(id, n) {
   const s = String(n).padStart(6,"0");
-  // units on the right: reverse for display? User wants units on the right.
-  // In LTR odometer, leftmost is highest. For "units on the right", we display reversed.
-  const digits = s.split("").reverse(); // so index 0 (left) is units? Wait.
-  // Actually for RTL visual with units on the right: we want rightmost = units.
-  // So display string reversed: rightmost digit is units.
-  document.querySelectorAll("#"+id+" .digit").forEach((el,i) => el.textContent = s[5-i]);
+  // Units on the right: leftmost digit = highest place, rightmost = units
+  document.querySelectorAll("#"+id+" .digit").forEach((el,i) => el.textContent = s[i]);
 }
 
 function initCounters() {
