@@ -261,8 +261,16 @@ th { background: var(--dark-blue); color: #fff; }
 }
 .modal-box h3 { color: var(--dark-blue); margin-bottom: 10px; }
 .modal-box p, .modal-box li { line-height: 1.8; margin: 6px 0; color: #334155; }
-.privacy-page { display: none; padding: 30px 24px; }
-.privacy-page.show { display: block; }
+.privacy-page {
+  display: none;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+.privacy-page.show { display: flex; }
+.privacy-page .card { max-width: 680px; width: 100%; text-align: center; }
+.privacy-page ol { text-align: right; display: inline-block; margin: 16px auto; }
 @media print {
   .no-print, nav, .info-btns, .form-actions, .footer-bar, .privacy-link { display: none !important; }
   .section { display: none !important; }
@@ -520,6 +528,9 @@ function renderOdo(id, n) {
 }
 
 function initCounters() {
+  // Seed completed assessments at 1, visits so they show 2 on first load
+  if (localStorage.getItem(DONE_KEY) === null) setCount(DONE_KEY, 1);
+  if (localStorage.getItem(VISIT_KEY) === null) setCount(VISIT_KEY, 1);
   let v = getCount(VISIT_KEY);
   v++;
   setCount(VISIT_KEY, v);
