@@ -7,13 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
 // --- Intellectual Property Protection ---
-(function() {
+document.addEventListener("DOMContentLoaded", function() {
   document.body.classList.add("protected");
 
   const overlay = document.getElementById("ipOverlay");
-  function showWarning(duration = 2500) {
+  if (!overlay) return;
+  function showWarning(duration = 3000) {
     overlay.classList.add("show");
-    setTimeout(() => overlay.classList.remove("show"), duration);
+    clearTimeout(window._ipTimer);
+    window._ipTimer = setTimeout(() => overlay.classList.remove("show"), duration);
   }
 
   // Disable right-click
@@ -48,6 +50,22 @@
     showWarning(1800);
   });
 
+
+  // More aggressive: keyup for PrintScreen (often fires on keyup)
+  document.addEventListener("keyup", e => {
+    if (e.key === "PrintScreen" || e.key.toLowerCase() === "printscreen") {
+      showWarning(4000);
+    }
+  });
+
+  // Periodic soft check on focus loss (some OS screenshot tools steal focus)
+  let lastFocus = Date.now();
+  window.addEventListener("blur", () => {
+    showWarning(2500);
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") showWarning(2500);
+  });
   // Block copy event
   document.addEventListener("copy", e => {
     e.preventDefault();
@@ -56,7 +74,7 @@
 
   // Disable drag
   document.addEventListener("dragstart", e => e.preventDefault());
-})();
+});
 </script>
 <style>
 :root {
@@ -365,6 +383,10 @@ body.protected, body.protected * {
 </style>
 </head>
 <body>
+<div id="ipOverlay">
+  <div class="msg">ممنوع النسخ، تحت طائلة المسؤولية القانونية،<br>جميع حقوق الملكية الفكرية ومنهجية الحساب محفوظة للمدرب والخبير بلال شنك - الأردن</div>
+</div>
+
 <div class="wrap">
   <div class="card" id="mainCard">
     <div class="title-bar">
@@ -822,13 +844,15 @@ initCounters();
 buildQuestions();
 
 // --- Intellectual Property Protection ---
-(function() {
+document.addEventListener("DOMContentLoaded", function() {
   document.body.classList.add("protected");
 
   const overlay = document.getElementById("ipOverlay");
-  function showWarning(duration = 2500) {
+  if (!overlay) return;
+  function showWarning(duration = 3000) {
     overlay.classList.add("show");
-    setTimeout(() => overlay.classList.remove("show"), duration);
+    clearTimeout(window._ipTimer);
+    window._ipTimer = setTimeout(() => overlay.classList.remove("show"), duration);
   }
 
   // Disable right-click
@@ -863,6 +887,22 @@ buildQuestions();
     showWarning(1800);
   });
 
+
+  // More aggressive: keyup for PrintScreen (often fires on keyup)
+  document.addEventListener("keyup", e => {
+    if (e.key === "PrintScreen" || e.key.toLowerCase() === "printscreen") {
+      showWarning(4000);
+    }
+  });
+
+  // Periodic soft check on focus loss (some OS screenshot tools steal focus)
+  let lastFocus = Date.now();
+  window.addEventListener("blur", () => {
+    showWarning(2500);
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") showWarning(2500);
+  });
   // Block copy event
   document.addEventListener("copy", e => {
     e.preventDefault();
@@ -871,11 +911,8 @@ buildQuestions();
 
   // Disable drag
   document.addEventListener("dragstart", e => e.preventDefault());
-})();
+});
 </script>
 
-<div id="ipOverlay">
-  <div class="msg">ممنوع النسخ، تحت طائلة المسؤولية القانونية،<br>جميع حقوق الملكية الفكرية ومنهجية الحساب محفوظة للمدرب والخبير بلال شنك - الأردن</div>
-</div>
 </body>
 </html>
