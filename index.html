@@ -5,7 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>أداة تشخيص الاجتماعات في بيئة العمل | المدرب بلال شنك</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+// --- Intellectual Property Protection ---
+(function() {
+  document.body.classList.add("protected");
+
+  const overlay = document.getElementById("ipOverlay");
+  function showWarning(duration = 2500) {
+    overlay.classList.add("show");
+    setTimeout(() => overlay.classList.remove("show"), duration);
+  }
+
+  // Disable right-click
+  document.addEventListener("contextmenu", e => {
+    e.preventDefault();
+    showWarning();
+  });
+
+  // Disable common copy / print / save shortcuts
+  document.addEventListener("keydown", e => {
+    const k = e.key.toLowerCase();
+    // PrintScreen, Ctrl+C, Ctrl+S, Ctrl+P, Ctrl+U, Ctrl+A, Ctrl+Shift+I etc.
+    if (k === "printscreen" || e.key === "PrintScreen") {
+      e.preventDefault();
+      showWarning(3500);
+      return;
+    }
+    if (e.ctrlKey || e.metaKey) {
+      if (["c","s","p","u","a","i","j"].includes(k) || (e.shiftKey && k === "i")) {
+        e.preventDefault();
+        showWarning();
+      }
+    }
+  });
+
+  // Attempt to catch screenshot via visibility / blur (works on some devices)
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) showWarning(2000);
+  });
+  window.addEventListener("blur", () => {
+    // brief warning when leaving the tab (common when taking screenshot)
+    showWarning(1800);
+  });
+
+  // Block copy event
+  document.addEventListener("copy", e => {
+    e.preventDefault();
+    showWarning();
+  });
+
+  // Disable drag
+  document.addEventListener("dragstart", e => e.preventDefault());
+})();
+</script>
 <style>
 :root {
   --dark-blue: #0c3a6e;
@@ -279,6 +331,36 @@ th { background: var(--dark-blue); color: #fff; }
   .section { display: none !important; }
   #report { display: block !important; }
   body { background: #fff; }
+}
+
+/* Protection overlay */
+#ipOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.92);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+#ipOverlay.show { display: flex; }
+#ipOverlay .msg {
+  max-width: 520px;
+  background: #fff;
+  color: #1e3a8a;
+  border-radius: 16px;
+  padding: 28px 24px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.8;
+  box-shadow: 0 20px 50px rgba(0,0,0,.4);
+}
+body.protected, body.protected * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
 }
 </style>
 </head>
@@ -738,6 +820,62 @@ function hidePrivacy() {
 
 initCounters();
 buildQuestions();
+
+// --- Intellectual Property Protection ---
+(function() {
+  document.body.classList.add("protected");
+
+  const overlay = document.getElementById("ipOverlay");
+  function showWarning(duration = 2500) {
+    overlay.classList.add("show");
+    setTimeout(() => overlay.classList.remove("show"), duration);
+  }
+
+  // Disable right-click
+  document.addEventListener("contextmenu", e => {
+    e.preventDefault();
+    showWarning();
+  });
+
+  // Disable common copy / print / save shortcuts
+  document.addEventListener("keydown", e => {
+    const k = e.key.toLowerCase();
+    // PrintScreen, Ctrl+C, Ctrl+S, Ctrl+P, Ctrl+U, Ctrl+A, Ctrl+Shift+I etc.
+    if (k === "printscreen" || e.key === "PrintScreen") {
+      e.preventDefault();
+      showWarning(3500);
+      return;
+    }
+    if (e.ctrlKey || e.metaKey) {
+      if (["c","s","p","u","a","i","j"].includes(k) || (e.shiftKey && k === "i")) {
+        e.preventDefault();
+        showWarning();
+      }
+    }
+  });
+
+  // Attempt to catch screenshot via visibility / blur (works on some devices)
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) showWarning(2000);
+  });
+  window.addEventListener("blur", () => {
+    // brief warning when leaving the tab (common when taking screenshot)
+    showWarning(1800);
+  });
+
+  // Block copy event
+  document.addEventListener("copy", e => {
+    e.preventDefault();
+    showWarning();
+  });
+
+  // Disable drag
+  document.addEventListener("dragstart", e => e.preventDefault());
+})();
 </script>
+
+<div id="ipOverlay">
+  <div class="msg">ممنوع النسخ، تحت طائلة المسؤولية القانونية،<br>جميع حقوق الملكية الفكرية ومنهجية الحساب محفوظة للمدرب والخبير بلال شنك - الأردن</div>
+</div>
 </body>
 </html>
