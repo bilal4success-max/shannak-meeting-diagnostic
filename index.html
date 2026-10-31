@@ -914,29 +914,57 @@ function startNewAssessment() {
 }
 
 function downloadPdf() {
-  const el = document.getElementById("report");
-  // Temporarily expand for full capture
-  const original = el.style.maxHeight;
-  el.style.maxHeight = "none";
-  el.style.overflow = "visible";
+  const src = document.getElementById("report");
+  // Build a clean RTL container for PDF
+  const wrap = document.createElement("div");
+  wrap.setAttribute("dir", "rtl");
+  wrap.style.cssText = "direction:rtl; text-align:right; font-family:Cairo,system-ui,sans-serif; width:700px; background:#fff; padding:24px; color:#1e293b; line-height:1.8;";
+  wrap.innerHTML = src.innerHTML;
+  // Force RTL on all elements
+  wrap.querySelectorAll("*").forEach(el => {
+    el.style.direction = "rtl";
+    el.style.textAlign = "right";
+    el.style.unicodeBidi = "plaintext";
+  });
+  // Center the score hero
+  const hero = wrap.querySelector(".score-hero");
+  if (hero) {
+    hero.style.textAlign = "center";
+    hero.querySelectorAll("*").forEach(e => e.style.textAlign = "center");
+  }
+  // Style tables for RTL
+  wrap.querySelectorAll("table").forEach(t => {
+    t.style.width = "100%";
+    t.style.direction = "rtl";
+  });
+  wrap.querySelectorAll("th, td").forEach(c => c.style.textAlign = "right");
+  // Hide buttons in PDF
+  wrap.querySelectorAll(".actions, button, .no-print").forEach(b => b.style.display = "none");
+  // Append off-screen
+  wrap.style.position = "fixed";
+  wrap.style.left = "-9999px";
+  wrap.style.top = "0";
+  document.body.appendChild(wrap);
+
   html2pdf().set({
-    margin: [10, 10, 10, 10],
+    margin: [12, 12, 12, 12],
     filename: "تقرير-تشخيص-الاجتماعات-شنك.pdf",
-    image: { type: "jpeg", quality: 0.95 },
+    image: { type: "jpeg", quality: 0.96 },
     html2canvas: {
-      scale: 1.8,
+      scale: 2,
       backgroundColor: "#ffffff",
       useCORS: true,
       letterRendering: true,
       scrollY: 0,
-      windowWidth: el.scrollWidth,
-      windowHeight: el.scrollHeight
+      width: 700,
+      windowWidth: 700
     },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    pagebreak: { mode: ["css", "legacy"], avoid: [".score-hero", ".tips", ".train-box", "tr"] }
-  }).from(el).save().then(() => {
-    el.style.maxHeight = original;
-    el.style.overflow = "";
+    pagebreak: { mode: ["css", "legacy"] }
+  }).from(wrap).save().then(() => {
+    document.body.removeChild(wrap);
+  }).catch(() => {
+    if (wrap.parentNode) document.body.removeChild(wrap);
   });
 }
 
