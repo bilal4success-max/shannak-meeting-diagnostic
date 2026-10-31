@@ -423,6 +423,18 @@ body.protected, body.protected * {
   .score-hero, .tips, .train-box, table { break-inside: avoid; page-break-inside: avoid; }
   .tips, .train-box { margin: 8px 0 !important; }
 }
+
+.course-item {
+  background: rgba(255,255,255,.15);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 8px 0;
+  border: 1px solid rgba(255,255,255,.25);
+}
+.course-item strong { color: #fef3c7; font-size: 16px; }
+#courseList { margin: 10px 0; }
+.axis h3 { color: #6d28d9; }
+.sec-title { color: #1e3a8a; }
 </style>
 </head>
 <body>
@@ -565,17 +577,16 @@ body.protected, body.protected * {
         </div>
         <div class="train-box">
           <h3>تدريب وتطوير</h3>
-          <p>بناءً على أضعف محور في إجاباتك، الدورة الأنسب الآن:</p>
-          <div class="course-name" id="courseName">—</div>
-          <p id="courseWhy" style="color:#e0e7ff;line-height:1.7"></p>
+          <p id="trainIntro">بناءً على نتائجك، الدورات الأنسب الآن:</p>
+          <div id="courseList"></div>
           <div class="actions" style="margin-top:10px">
-            <button class="btn btn-orange" id="trainBtn">توصية الدورة</button>
+            <button class="btn btn-orange" id="trainBtn">عرض توصيات التدريب</button>
           </div>
         </div>
         <div class="actions no-print" style="margin-top:16px">
           <button class="btn btn-blue" onclick="window.print()">طباعة التقرير</button>
           <button class="btn btn-purple" onclick="downloadPdf()">حفظ التقرير PDF</button>
-          <button class="btn btn-light" onclick="backHome()">تقييم جديد</button>
+          <button class="btn btn-light" onclick="startNewAssessment()">ابدأ تقييماً جديداً</button>
         </div>
       </section>
     </div>
@@ -865,40 +876,68 @@ function compute() {
     ? `<h3>إجابات الأسئلة المفتوحة</h3><ul>${opens.map(o=>`<li>${o}</li>`).join("")}</ul>`
     : "";
   const recs = recommend(axes, L.cls);
+  const intro = document.getElementById("trainIntro");
+  if (intro) intro.textContent = (L.cls === "l1" || L.cls === "l2")
+    ? "بناءً على نتيجتك الجيدة، الدورة الأنسب للتعزيز:"
+    : "بناءً على أضعف ثلاثة محاور، الدورات الأنسب الآن:";
   const courseBox = document.getElementById("courseList");
   if (courseBox) {
     courseBox.innerHTML = recs.map(r =>
-      `<div class="course-item"><strong>${r.course}</strong><br><span style="color:#e0e7ff">${r.why}</span></div>`
+      `<div class="course-item"><strong>${r.course}</strong><br><span style="color:#e0e7ff;font-size:13px">${r.why}</span></div>`
     ).join("");
   }
   document.getElementById("trainBtn").onclick = () => {
     alert("توصيات التدريب:\n\n" + recs.map(r => r.course + "\n" + r.why).join("\n\n"));
   };
   // Save record & increment done counter
-  const recs = JSON.parse(localStorage.getItem(RECORDS_KEY)||"[]");
-  recs.push({ ...p, pct, total, date: p.date, ts: Date.now() });
-  localStorage.setItem(RECORDS_KEY, JSON.stringify(recs.slice(-50)));
+  const records = JSON.parse(localStorage.getItem(RECORDS_KEY)||"[]");
+  records.push({ ...p, pct, total, date: p.date, ts: Date.now() });
+  localStorage.setItem(RECORDS_KEY, JSON.stringify(records.slice(-50)));
   setCount(DONE_KEY, getCount(DONE_KEY)+1);
   renderOdo("doneOdo", getCount(DONE_KEY));
   showSection("report");
 }
 
+function startNewAssessment() {
+  // Clear participant data
+  document.getElementById("empName").value = "";
+  document.getElementById("empJob").value = "";
+  document.getElementById("empCompany").value = "";
+  document.getElementById("empDate").value = "";
+  // Clear open answers
+  for (let i=1; i<=5; i++) document.getElementById("o"+i).value = "";
+  // Clear radio selections
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  // Reset to first page
+  showPage(0);
+  backHome();
+}
+
 function downloadPdf() {
   const el = document.getElementById("report");
+  // Temporarily expand for full capture
+  const original = el.style.maxHeight;
+  el.style.maxHeight = "none";
+  el.style.overflow = "visible";
   html2pdf().set({
-    margin:[8,8,8,8],
-    filename:"تقرير-تشخيص-الاجتماعات-شنك.pdf",
-    image:{type:"jpeg",quality:0.98},
-    html2canvas:{
-      scale:2,
-      backgroundColor:"#ffffff",
-      useCORS:true,
-      letterRendering:true,
-      scrollY:0
+    margin: [10, 10, 10, 10],
+    filename: "تقرير-تشخيص-الاجتماعات-شنك.pdf",
+    image: { type: "jpeg", quality: 0.95 },
+    html2canvas: {
+      scale: 1.8,
+      backgroundColor: "#ffffff",
+      useCORS: true,
+      letterRendering: true,
+      scrollY: 0,
+      windowWidth: el.scrollWidth,
+      windowHeight: el.scrollHeight
     },
-    jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},
-    pagebreak:{mode:["avoid-all","css","legacy"]}
-  }).from(el).save();
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    pagebreak: { mode: ["css", "legacy"], avoid: [".score-hero", ".tips", ".train-box", "tr"] }
+  }).from(el).save().then(() => {
+    el.style.maxHeight = original;
+    el.style.overflow = "";
+  });
 }
 
 function showRecords() {
